@@ -1354,7 +1354,7 @@ function confirmOrder() {
   `;
 
   // ✅ Aapka NAYA Telegram Token aur purani Chat ID yahan set hai
-  const botToken = "8569781395:AAGO_pnozAETAaNdwYzEu51p_ZMmbJNtMrc"; 
+  const botToken = "8801145500:AAFuiB0RiaNRMzkqohNvIXY0mmZs76iIqYw"; 
   const chatId = "7230867454"; 
 
   const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
