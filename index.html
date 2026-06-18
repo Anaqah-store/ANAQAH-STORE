@@ -1026,7 +1026,7 @@
       <h3>Review & Confirm</h3>
       <button class="close-drawer" onclick="closeCheckout()">&#10005;</button>
     </div>
-    <!-- FIXED FOR FORMSPREE EMAIL SUBMISSION -->
+    <!-- DIRECT FORMSPREE SUBMISSION WITHOUT JAVASCRIPT BLOCKING -->
     <form action="https://formspree.io/f/mdavrewg" method="POST" id="checkoutForm">
       <div class="modal-body">
         <h4 style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--mid);margin-bottom:14px;">Order Summary</h4>
@@ -1072,20 +1072,6 @@
         <button type="submit" class="confirm-btn">✓ Confirm Order</button>
       </div>
     </form>
-  </div>
-</div>
-
-<!-- SUCCESS MODAL -->
-<div class="success-modal" id="successModal">
-  <div class="success-box">
-    <div class="success-icon">&#127873;</div>
-    <h3>Order Placed!</h3>
-    <p>Thank you for shopping with Anaqah.<br>Your order has been received and is being processed.</p>
-    <div class="success-order-id">
-      Order ID: <strong id="orderId">#ANQ-000000</strong>
-    </div>
-    <p style="font-size:12px;color:var(--mid);margin-bottom:28px;">A confirmation will be sent to your email. Estimated delivery: 3–5 business days.</p>
-    <button class="btn-primary" onclick="closeSuccess()">Continue Shopping</button>
   </div>
 </div>
 
@@ -1170,11 +1156,6 @@ function renderProducts(filterCatKey = 'all') {
       if(grid) sec.style.display = grid.children.length === 0 ? 'none' : '';
     }
   });
-  const childSec = document.getElementById('children');
-  if(childSec) {
-    const g = document.getElementById('childrenGrid');
-    childSec.style.display = g && g.children.length ? '' : 'none';
-  }
 }
 
 function filterCat(cat, btn) {
@@ -1281,13 +1262,17 @@ function openCheckout() {
   document.getElementById('billDisc').textContent = `–₹${discount.toLocaleString()}`;
   document.getElementById('billTotal').textContent = `₹${total.toLocaleString()}`;
 
-  // Formspree ke liye hidden fields me calculation data daalna
+  // Formspree hidden inputs
   document.getElementById('hiddenSub').value = "₹" + sub;
   document.getElementById('hiddenDel').value = delivery === 0 ? 'FREE' : "₹" + delivery;
   document.getElementById('hiddenDisc').value = "₹" + discount;
   document.getElementById('hiddenTotal').value = "₹" + total;
 
-  // Order Items text string banana aur hidden input me inject karna
+  // Set Unique Order ID
+  const orderId = '#ANQ-' + Math.floor(100000 + Math.random()*900000);
+  document.getElementById('hiddenOrderId').value = orderId;
+
+  // Form Items Format String
   let itemsFormattedText = "";
   items.forEach((i, index) => {
     itemsFormattedText += `${index + 1}. ${i.name} (Qty: ${i.qty}) - ₹${i.price * i.qty}\n`;
@@ -1312,48 +1297,6 @@ function openCheckout() {
 function closeCheckout() {
   document.getElementById('checkoutModal').classList.remove('open');
   openDrawer();
-}
-
-/* ===================== FORMSPREE SUBMISSION (EMAIL ACCESS) ===================== */
-document.getElementById('checkoutForm').addEventListener('submit', function(e) {
-  e.preventDefault(); // Default redirect rokne ke liye
-
-  const form = e.target;
-  const data = new FormData(form);
-  
-  // Naya Unique Order ID generate karke form me append karna
-  const orderId = '#ANQ-' + Math.floor(100000 + Math.random()*900000);
-  document.getElementById('hiddenOrderId').value = orderId;
-  data.set('Order ID', orderId); // Data reset karein unique id ke sath
-
-  // Formspree API call back-end me submit karne ke liye
-  fetch(form.action, {
-    method: form.method,
-    body: data,
-    headers: {
-        'Accept': 'application/json'
-    }
-  }).then(response => {
-    if (response.ok) {
-      // Form successfully submitted to email, ab frontend modals switch karein
-      document.getElementById('checkoutModal').classList.remove('open');
-      document.getElementById('orderId').textContent = orderId;
-      document.getElementById('successModal').classList.add('open');
-      
-      // Cart reset
-      cart = {};
-      updateCartUI();
-      form.reset();
-    } else {
-      showToast('Formspree submission error. Please check setup.');
-    }
-  }).catch(error => {
-    showToast('Network error occured. Try again.');
-  });
-});
-
-function closeSuccess() {
-  document.getElementById('successModal').classList.remove('open');
 }
 
 /* ===================== TOAST ===================== */
