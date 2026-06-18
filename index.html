@@ -830,7 +830,7 @@
     </ul>
     <div class="nav-actions">
       <button class="cart-btn" onclick="openDrawer()">
-        🛒 Cart
+        &#128722; Cart
         <span class="cart-count" id="cartCount">0</span>
       </button>
     </div>
@@ -873,7 +873,9 @@
       <p>Refined silhouettes for every occasion</p>
     </div>
   </div>
-  <div class="product-grid" id="womenGrid"></div>
+  <div class="product-grid" id="womenGrid">
+    <!-- Cards injected by JS -->
+  </div>
 </section>
 
 <hr class="divider"/>
@@ -1000,11 +1002,11 @@
 <div class="drawer" id="drawer">
   <div class="drawer-header">
     <h3>Your Bag</h3>
-    <button class="close-drawer" onclick="closeDrawer()">✕</button>
+    <button class="close-drawer" onclick="closeDrawer()">&#10005;</button>
   </div>
   <div class="drawer-items" id="drawerItems">
     <div class="empty-cart">
-      <div class="icon">🛒</div>
+      <div class="icon">&#128722;</div>
       <p>Your bag is empty.<br>Add something beautiful.</p>
     </div>
   </div>
@@ -1022,50 +1024,61 @@
   <div class="modal">
     <div class="modal-header">
       <h3>Review & Confirm</h3>
-      <button class="close-drawer" onclick="closeCheckout()">✕</button>
+      <button class="close-drawer" onclick="closeCheckout()">&#10005;</button>
     </div>
-    <div class="modal-body">
-      <h4 style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--mid);margin-bottom:14px;">Order Summary</h4>
-      <div class="order-items" id="orderItems"></div>
-      <div class="bill-summary">
-        <div class="bill-row"><span>Subtotal</span><span id="billSub">₹0</span></div>
-        <div class="bill-row"><span>Delivery</span><span id="billDel">₹99</span></div>
-        <div class="bill-row"><span>Discount</span><span style="color:#27AE60" id="billDisc">–₹0</span></div>
-        <div class="bill-row total"><span>Total Payable</span><span id="billTotal">₹0</span></div>
+    <!-- FIXED FOR FORMSPREE EMAIL SUBMISSION -->
+    <form action="https://formspree.io/f/mdavrewg" method="POST" id="checkoutForm">
+      <div class="modal-body">
+        <h4 style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--mid);margin-bottom:14px;">Order Summary</h4>
+        <div class="order-items" id="orderItems"></div>
+        
+        <!-- Hidden input to submit items list to Formspree -->
+        <input type="hidden" name="Ordered Items List" id="hiddenCartItems" value="">
+        
+        <div class="bill-summary">
+          <div class="bill-row"><span>Subtotal</span><input type="hidden" name="Subtotal" id="hiddenSub"><span id="billSub">₹0</span></div>
+          <div class="bill-row"><span>Delivery</span><input type="hidden" name="Delivery Charges" id="hiddenDel"><span id="billDel">₹99</span></div>
+          <div class="bill-row"><span>Discount</span><input type="hidden" name="Discount Availed" id="hiddenDisc"><span style="color:#27AE60" id="billDisc">–₹0</span></div>
+          <div class="bill-row total"><span>Total Payable</span><input type="hidden" name="Total Amount Paid" id="hiddenTotal"><span id="billTotal">₹0</span></div>
+        </div>
+        <h4 style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--mid);margin-bottom:16px;">Delivery Details</h4>
+        
+        <!-- Hidden input for unique Order ID -->
+        <input type="hidden" name="Order ID" id="hiddenOrderId" value="">
+
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" id="fname" name="First Name" placeholder="Ayesha" required/></div>
+          <div class="form-group"><label>Last Name</label><input type="text" id="lname" name="Last Name" placeholder="Rahman"/></div>
+        </div>
+        <div class="form-group"><label>Phone</label><input type="tel" id="phone" name="Phone Number" placeholder="+91 98765 43210" required/></div>
+        <div class="form-group"><label>Email</label><input type="email" id="email" name="Email Address" placeholder="you@email.com" required/></div>
+        <div class="form-group"><label>Address</label><textarea id="addr" name="Full Address" rows="2" placeholder="House No, Street, Area" required></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>City</label><input type="text" id="city" name="City" placeholder="Hyderabad" required/></div>
+          <div class="form-group"><label>PIN Code</label><input type="text" id="pin" name="PIN Code" placeholder="500001" required/></div>
+        </div>
+        <div class="form-group">
+          <label>Payment Method</label>
+          <select id="payment" name="Payment Method">
+            <option>Cash on Delivery</option>
+            <option>UPI</option>
+            <option>Credit / Debit Card</option>
+            <option>Net Banking</option>
+          </select>
+        </div>
       </div>
-      <h4 style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--mid);margin-bottom:16px;">Delivery Details</h4>
-      <div class="form-row">
-        <div class="form-group"><label>First Name</label><input type="text" id="fname" placeholder="Ayesha"/></div>
-        <div class="form-group"><label>Last Name</label><input type="text" id="lname" placeholder="Rahman"/></div>
+      <div class="modal-footer">
+        <button type="button" class="cancel-order" onclick="closeCheckout()">Back to Cart</button>
+        <button type="submit" class="confirm-btn">✓ Confirm Order</button>
       </div>
-      <div class="form-group"><label>Phone</label><input type="tel" id="phone" placeholder="+91 98765 43210"/></div>
-      <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="you@email.com"/></div>
-      <div class="form-group"><label>Address</label><textarea id="addr" rows="2" placeholder="House No, Street, Area"></textarea></div>
-      <div class="form-row">
-        <div class="form-group"><label>City</label><input type="text" id="city" placeholder="Hyderabad"/></div>
-        <div class="form-group"><label>PIN Code</label><input type="text" id="pin" placeholder="500001"/></div>
-      </div>
-      <div class="form-group">
-        <label>Payment Method</label>
-        <select id="payment">
-          <option>Cash on Delivery</option>
-          <option>UPI</option>
-          <option>Credit / Debit Card</option>
-          <option>Net Banking</option>
-        </select>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="cancel-order" onclick="closeCheckout()">Back to Cart</button>
-      <button class="confirm-btn" onclick="confirmOrder()">✓ Confirm Order</button>
-    </div>
+    </form>
   </div>
 </div>
 
 <!-- SUCCESS MODAL -->
 <div class="success-modal" id="successModal">
   <div class="success-box">
-    <div class="success-icon">🎁</div>
+    <div class="success-icon">&#127873;</div>
     <h3>Order Placed!</h3>
     <p>Thank you for shopping with Anaqah.<br>Your order has been received and is being processed.</p>
     <div class="success-order-id">
@@ -1082,6 +1095,7 @@
 <script>
 /* ===================== PRODUCT DATA ===================== */
 const products = [
+  // WOMEN
   { id:1, cat:'women', label:'Women', name:'Silk Kaftan Dress', desc:'Flowing silhouette, hand-embroidered hem', price:2799, img:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=600&q=80', badge:'New', wasPrice:3499 },
   { id:2, cat:'women', label:'Women', name:'Linen Palazzo Set', desc:'Breathable two-piece, summer essential', price:1999, img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80' },
   { id:3, cat:'women', label:'Women', name:'High-Waist Trousers', desc:'Classic cut, premium poly-cotton blend', price:1499, img:'https://images.unsplash.com/photo-1554412933-514a83d2f3c8?auto=format&fit=crop&w=600&q=80' },
@@ -1089,21 +1103,25 @@ const products = [
   { id:5, cat:'women', label:'Women', name:'Wrap Maxi Dress', desc:'Adjustable tie-waist, vibrant print', price:1749, img:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=600&q=80' },
   { id:6, cat:'women', label:'Women', name:'Broderie Blouse', desc:'Eyelet detail, relaxed fit', price:1299, img:'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=600&q=80', badge:'New' },
 
+  // CHILDREN — GIRLS
   { id:7, cat:'girls', label:'Girls', name:'Floral Frock', desc:'Cotton twirl dress, ages 2–8', price:899, img:'https://images.unsplash.com/photo-1604671801908-b6b73ef31d5a?auto=format&fit=crop&w=600&q=80', badge:'New' },
   { id:8, cat:'girls', label:'Girls', name:'Tutu Skirt Set', desc:'Rainbow tulle with matching top', price:1099, img:'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=600&q=80' },
   { id:9, cat:'girls', label:'Girls', name:'Denim Jumpsuit', desc:'Adjustable straps, ages 3–10', price:1299, img:'https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=600&q=80' },
   { id:10, cat:'girls', label:'Girls', name:'Party Dress', desc:'Velvet bow detail, festive wear', price:1499, img:'https://images.unsplash.com/photo-1476234251651-f353703a034d?auto=format&fit=crop&w=600&q=80', badge:'New' },
 
+  // CHILDREN — BOYS
   { id:11, cat:'boys', label:'Boys', name:'Kurta Pyjama Set', desc:'Cotton blend, festive collection', price:999, img:'https://images.unsplash.com/photo-1591454919040-6f05a1f0c3cc?auto=format&fit=crop&w=600&q=80' },
   { id:12, cat:'boys', label:'Boys', name:'Chino Shorts + Shirt', desc:'Smart casual, ages 3–12', price:1199, img:'https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?auto=format&fit=crop&w=600&q=80' },
   { id:13, cat:'boys', label:'Boys', name:'Printed Tee + Joggers', desc:'Comfy everyday play outfit', price:799, img:'https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=600&q=80', badge:'Sale', wasPrice:1099 },
 
+  // NEWBORNS
   { id:14, cat:'newborn', label:'Newborn', name:'Organic Onesie 3-Pack', desc:'GOTS certified organic cotton, 0–3 months', price:999, img:'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80', badge:'New' },
   { id:15, cat:'newborn', label:'Newborn', name:'Swaddle Blanket Set', desc:'Muslin cotton, 4-layer softness', price:799, img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&w=600&q=80' },
   { id:16, cat:'newborn', label:'Newborn', name:'Sleepsuit Gift Set', desc:'5-piece bundled layette, 0–6 months', price:1799, img:'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=600&q=80', badge:'New' },
   { id:17, cat:'newborn', label:'Newborn', name:'Knit Beanie & Bootie Set', desc:'Merino wool blend, hypoallergenic', price:599, img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=600&q=80' },
   { id:18, cat:'newborn', label:'Newborn', name:'Romper with Headband', desc:'Floral print, snap closure, 0–3 months', price:699, img:'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=600&q=80' },
 
+  // GIFT SETS
   { id:19, cat:'sets', label:'Gift Set', name:'New Baby Luxury Box', desc:'Organic onesie + swaddle + toy', price:2499, img:'https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=600&q=80', badge:'New' },
   { id:20, cat:'sets', label:'Gift Set', name:'Mother & Baby Duo', desc:'Kaftan for mom + romper for baby', price:3499, img:'https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=600&q=80' },
 ];
@@ -1129,7 +1147,7 @@ function renderProducts(filterCatKey = 'all') {
           <img src="${p.img}" alt="${p.name}" loading="lazy"/>
           ${badge}
           <div class="card-actions">
-            <button class="quick-view" title="Wishlist">♡</button>
+            <button class="quick-view" title="Wishlist">&#9825;</button>
           </div>
         </div>
         <div class="card-body">
@@ -1215,7 +1233,7 @@ function updateCartUI() {
   document.getElementById('totalAmt').textContent = `₹${total.toLocaleString()}`;
 
   if(items.length === 0) {
-    drawerItems.innerHTML = `<div class="empty-cart"><div class="icon">🛒</div><p>Your bag is empty.<br>Add something beautiful.</p></div>`;
+    drawerItems.innerHTML = `<div class="empty-cart"><div class="icon">&#128722;</div><p>Your bag is empty.<br>Add something beautiful.</p></div>`;
     footer.style.display='none';
   } else {
     footer.style.display='';
@@ -1263,6 +1281,19 @@ function openCheckout() {
   document.getElementById('billDisc').textContent = `–₹${discount.toLocaleString()}`;
   document.getElementById('billTotal').textContent = `₹${total.toLocaleString()}`;
 
+  // Formspree ke liye hidden fields me calculation data daalna
+  document.getElementById('hiddenSub').value = "₹" + sub;
+  document.getElementById('hiddenDel').value = delivery === 0 ? 'FREE' : "₹" + delivery;
+  document.getElementById('hiddenDisc').value = "₹" + discount;
+  document.getElementById('hiddenTotal').value = "₹" + total;
+
+  // Order Items text string banana aur hidden input me inject karna
+  let itemsFormattedText = "";
+  items.forEach((i, index) => {
+    itemsFormattedText += `${index + 1}. ${i.name} (Qty: ${i.qty}) - ₹${i.price * i.qty}\n`;
+  });
+  document.getElementById('hiddenCartItems').value = itemsFormattedText;
+
   document.getElementById('orderItems').innerHTML = items.map(i => `
     <div class="order-item">
       <div class="order-item-left">
@@ -1283,79 +1314,43 @@ function closeCheckout() {
   openDrawer();
 }
 
-/* ===================== CONFIRM ORDER WITH FIXED TELEGRAM INTEGRATION ===================== */
-function confirmOrder() {
-  const fname = document.getElementById('fname').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const addr  = document.getElementById('addr').value.trim();
-  const city  = document.getElementById('city').value.trim();
-  const pin   = document.getElementById('pin').value.trim();
+/* ===================== FORMSPREE SUBMISSION (EMAIL ACCESS) ===================== */
+document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+  e.preventDefault(); // Default redirect rokne ke liye
 
-  const emailInput = document.getElementById('email');
-  const email = emailInput ? emailInput.value.trim() : 'N/A';
+  const form = e.target;
+  const data = new FormData(form);
   
-  const paymentInput = document.getElementById('payment');
-  const payment = paymentInput ? paymentInput.value : 'COD';
-
-  if(!fname || !phone || !addr || !city || !pin) {
-    showToast('Please fill in all delivery details');
-    return;
-  }
-
+  // Naya Unique Order ID generate karke form me append karna
   const orderId = '#ANQ-' + Math.floor(100000 + Math.random()*900000);
-  
-  const items = Object.values(cart);
-  let itemsText = "";
-  items.forEach((i, index) => {
-    itemsText += `${index + 1}. ${i.name} (Qty: ${i.qty}) - Rs.${i.price * i.qty}\n`;
+  document.getElementById('hiddenOrderId').value = orderId;
+  data.set('Order ID', orderId); // Data reset karein unique id ke sath
+
+  // Formspree API call back-end me submit karne ke liye
+  fetch(form.action, {
+    method: form.method,
+    body: data,
+    headers: {
+        'Accept': 'application/json'
+    }
+  }).then(response => {
+    if (response.ok) {
+      // Form successfully submitted to email, ab frontend modals switch karein
+      document.getElementById('checkoutModal').classList.remove('open');
+      document.getElementById('orderId').textContent = orderId;
+      document.getElementById('successModal').classList.add('open');
+      
+      // Cart reset
+      cart = {};
+      updateCartUI();
+      form.reset();
+    } else {
+      showToast('Formspree submission error. Please check setup.');
+    }
+  }).catch(error => {
+    showToast('Network error occured. Try again.');
   });
-
-  const sub = getSubtotal();
-  const delivery = sub >= 1499 ? 0 : 99;
-  const discount = sub >= 2999 ? Math.round(sub * 0.05) : 0;
-  const total = sub + delivery - discount;
-  const delText = delivery === 0 ? 'FREE' : 'Rs.' + delivery;
-
-  // Safe and clean text formatting for HTML parsing
-  const textMessage = 
-    `<b>🚨 NAYA ORDER AAYA HAI! (Anaqah)</b>\n\n` +
-    `🆔 <b>Order ID:</b> ${orderId}\n` +
-    `━━━━━━━━━━━━━━━━━━━━━\n` +
-    `📦 <b>Items:</b>\n${itemsText}\n` +
-    `💰 <b>Subtotal:</b> Rs.${sub}\n` +
-    `🚚 <b>Delivery:</b> ${delText}\n` +
-    `🏷️ <b>Discount:</b> Rs.${discount}\n` +
-    `💵 <b>Total Payable:</b> Rs.${total}\n` +
-    `━━━━━━━━━━━━━━━━━━━━━\n` +
-    `👤 <b>Customer Name:</b> ${fname}\n` +
-    `📞 <b>Customer Phone:</b> ${phone}\n` +
-    `📧 <b>Customer Email:</b> ${email ? email : 'N/A'}\n` +
-    `📍 <b>Address:</b> ${addr}, ${city} - ${pin}\n` +
-    `💳 <b>Payment Method:</b> ${payment}`;
-
-  const myToken = "8569781395:AAGO_pnozAETAaNdwYzEu51p_ZMmbJNtMrc"; 
-  const myChatId = "7230867454";     
-
-  const safeMessage = encodeURIComponent(textMessage);
-  // parse_mode=HTML is more stable than Markdown for basic styling
-  const telegramUrl = `https://api.telegram.org/bot${myToken}/sendMessage?chat_id=${myChatId}&text=${safeMessage}&parse_mode=HTML`;
-  
-  fetch(telegramUrl)
-    .then(res => {
-      if (!res.ok) {
-         return res.json().then(err => { throw new Error(JSON.stringify(err)) });
-      }
-      console.log("Order details sent successfully to Telegram!");
-    })
-    .catch(err => console.error("Telegram Send Error Details:", err));
-
-  document.getElementById('checkoutModal').classList.remove('open');
-  document.getElementById('orderId').textContent = orderId;
-  document.getElementById('successModal').classList.add('open');
-
-  cart = {};
-  updateCartUI();
-}
+});
 
 function closeSuccess() {
   document.getElementById('successModal').classList.remove('open');
